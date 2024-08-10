@@ -11,8 +11,8 @@ int main(void){
   ball.rect.y = 450;
   ball.rect.w = 5;
   ball.rect.h = 5;
-  ball.vel_x = -(10/sqrt(200))*8;
-  ball.vel_y = -(10/sqrt(200))*8;
+  ball.vel_x = -(1/sqrt(2))*8;
+  ball.vel_y = -(1/sqrt(2))*8;
 
   Block* head = malloc(sizeof(Block));
   Block* second_block = malloc(sizeof(Block));
@@ -94,10 +94,6 @@ int main(void){
       }
     }
 
-    if(pos_y_delta != 0){
-      printf("%i\n", pos_y_delta);
-    }
-
     if(ball.rect.y >= 480){
       running = 0;
     }
@@ -110,6 +106,7 @@ int main(void){
       ball.rect.y += ball.vel_y + 2*pos_y_delta;
 
     }
+
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);

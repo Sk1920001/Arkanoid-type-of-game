@@ -40,7 +40,7 @@ void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_
   int next_frame_pos_x = ball->rect.x + ball->vel_x;
   int next_frame_pos_y = ball->rect.y + ball->vel_y;
 
-  if(next_frame_pos_y >= bar.y && next_frame_pos_y <= bar.y + bar.h && next_frame_pos_x >= bar.x && next_frame_pos_x <= bar.x + bar.w){
+  if(next_frame_pos_y + ball->rect.h >= bar.y && next_frame_pos_x >= bar.x && next_frame_pos_x <= bar.x + bar.w){
 
     if(ball->vel_x >= 0 && ball->vel_y >= 0){
       float lambda = (float)((ball->rect.x + ball->rect.w) - bar.x)/ (-ball->vel_x);
@@ -61,14 +61,23 @@ void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_
       }
     }
 
-    //apply rays here too
-    *pos_y_delta = bar.y - (ball->rect.h + next_frame_pos_y);
+    //uses a ray to calculate te collition with the bar also uses a linear combination to change the direction of the ball :c
+    float lambda = (float)((ball->rect.y + ball->rect.h) - bar.y)/(-ball->vel_y);
+    int ray_collition_x = ball->rect.x + lambda * ball->vel_x;
+
     ball->vel_x = 0;
     ball->vel_y = -8;
 
-    float t = (bar.x + bar.w -ball->rect.x)/(float)bar.w;
-    float angle = (-M_PI/3)*t + (M_PI/3)*(1-t);
+    float t = (bar.x + bar.w -ray_collition_x)/(float)bar.w;
+    float angle = (-M_PI/(float)3)*t + (M_PI/(float)3)*(1-t);
     rotate_vector(&(ball->vel_x),&(ball->vel_y), angle);
+
+    float factor = sqrt(pow(ray_collition_x - next_frame_pos_x, 2) + pow(bar.y - next_frame_pos_y, 2));
+    *pos_x_delta = (ball->vel_x/8)*factor;
+    *pos_y_delta = (ball->vel_y/8)*factor;
+
+    ball->rect.x = ray_collition_x;
+    ball->rect.y = bar.y - ball->rect.h;
   }
 }
 
