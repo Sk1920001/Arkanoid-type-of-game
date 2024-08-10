@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#define WINDOW_H 480
+#define WINDOW_W 640
+
 typedef struct Block {
   SDL_Rect rect;
   int render_state;
