@@ -40,6 +40,7 @@ int main(void){
         }
       }
       SDL_GetMouseState(&mouse_pos_x,&mouse_pos_y);
+      //fix bug when bar pass the possition of the ball, the ball does wierd things :c
       if(mouse_pos_x + bar.w <= WINDOW_W){
         bar.x = mouse_pos_x;
       }else{

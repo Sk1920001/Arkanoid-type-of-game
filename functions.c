@@ -66,15 +66,15 @@ void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_
     int ray_collition_x = ball->rect.x + lambda * ball->vel_x;
 
     ball->vel_x = 0;
-    ball->vel_y = -6;
+    ball->vel_y = -8;
 
     float t = (bar.x + bar.w -ray_collition_x)/(float)bar.w;
     float angle = (-M_PI/(float)3)*t + (M_PI/(float)3)*(1-t);
     rotate_vector(&(ball->vel_x),&(ball->vel_y), angle);
 
     float factor = sqrt(pow(ray_collition_x - next_frame_pos_x, 2) + pow(bar.y - next_frame_pos_y, 2));
-    *pos_x_delta = (ball->vel_x/6)*factor;
-    *pos_y_delta = (ball->vel_y/6)*factor;
+    *pos_x_delta = (ball->vel_x/8)*factor;
+    *pos_y_delta = (ball->vel_y/8)*factor;
 
     ball->rect.x = ray_collition_x;
     ball->rect.y = bar.y - ball->rect.h;
@@ -93,42 +93,42 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
     if(ball->vel_x >= 0 && ball->vel_y <= 0){
       float lambda = (float)((ball->rect.x + ball->rect.w) - block->rect.x)/(-ball->vel_x);
       int ray_collition_y = ball->rect.y + lambda * ball->vel_y;
-      if(ray_collition_y >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
-        *pos_x_delta += block->rect.x + -(ball->rect.x + ball->rect.w + ball->vel_x);
-        ball->vel_x = ball->vel_x * -1;
+      if(ray_collition_y + ball->rect.h >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
+        *pos_x_delta = block->rect.x + -(ball->rect.x + ball->rect.w + ball->vel_x);
+        ball->vel_x *= -1;
       }else{
-        *pos_y_delta += -(block->rect.y + block->rect.h) + (ball->rect.y + ball->vel_y);
-        ball->vel_y = ball->vel_y * -1;
+        *pos_y_delta = (block->rect.y + block->rect.h) - (ball->rect.y + ball->vel_y);
+        ball->vel_y *= -1;
       }
     }else if (ball->vel_x <= 0 && ball->vel_y <= 0) {
       float lambda = (float)(ball->rect.x - (block->rect.x + block->rect.w))/ (-ball->vel_x);
       int ray_collition_y = ball->rect.y + lambda * ball->vel_y;
-      if(ray_collition_y >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
-        *pos_x_delta += (block->rect.x + block->rect.w) - (ball->rect.x + ball->vel_x);
-        ball->vel_x = ball->vel_x * -1;
+      if(ray_collition_y + ball->rect.h >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
+        *pos_x_delta = (block->rect.x + block->rect.w) - (ball->rect.x + ball->vel_x);
+        ball->vel_x *= -1;
       }else{
-        *pos_y_delta += (block->rect.y + block->rect.h) - (ball->rect.y + ball->vel_y);
-        ball->vel_y = ball->vel_y * -1;
+        *pos_y_delta = (block->rect.y + block->rect.h) - (ball->rect.y + ball->vel_y);
+        ball->vel_y *= -1;
       }
     }else if(ball->vel_x >= 0 && ball->vel_y >= 0){
       float lambda = (float)((ball->rect.x + ball->rect.w) - block->rect.x)/ (-ball->vel_x);
       int ray_collition_y = (ball->rect.y + ball->rect.h) + lambda * ball->vel_y;
-      if(ray_collition_y >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
-        *pos_x_delta += block->rect.x - (ball->rect.x + ball->rect.w + ball->vel_x);
-        ball->vel_x = ball->vel_x * -1;
+      if(ray_collition_y >= block->rect.y && ray_collition_y - ball->rect.h <= block->rect.y + block->rect.h){
+        *pos_x_delta = block->rect.x - (ball->rect.x + ball->rect.w + ball->vel_x);
+        ball->vel_x *= -1;
       }else{
-        *pos_y_delta += block->rect.y - (ball->rect.y + ball->rect.h + ball->vel_y);
-        ball->vel_y = ball->vel_y * -1;
+        *pos_y_delta = block->rect.y - (ball->rect.y + ball->rect.h + ball->vel_y);
+        ball->vel_y *= -1;
       }
     }else if(ball->vel_x <= 0 && ball->vel_y >= 0){
       float lambda = (float)(ball->rect.x - (block->rect.x + block->rect.w))/ (-ball->vel_x);
       int ray_collition_y = (ball->rect.y + ball->rect.h) + lambda * ball->vel_y;
-      if(ray_collition_y >= block->rect.y && ray_collition_y <= block->rect.y + block->rect.h){
-        *pos_x_delta += (block->rect.x + block->rect.w) - (ball->rect.x + ball->vel_x);
-        ball->vel_x = ball->vel_x * -1;
+      if(ray_collition_y >= block->rect.y && ray_collition_y - ball->rect.h <= block->rect.y + block->rect.h){
+        *pos_x_delta = (block->rect.x + block->rect.w) - (ball->rect.x + ball->vel_x);
+        ball->vel_x *= -1;
       }else{
-        *pos_y_delta += block->rect.y - (ball->rect.y + ball->rect.h + ball->vel_y);
-        ball->vel_y = ball->vel_y * -1;
+        *pos_y_delta = block->rect.y - (ball->rect.y + ball->rect.h + ball->vel_y);
+        ball->vel_y *= -1;
       }
     }
     delete_block(head, block->rect.x, block->rect.y);
