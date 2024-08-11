@@ -6,10 +6,12 @@
 #define WINDOW_H 480
 #define WINDOW_W 640
 
+typedef enum {RED, GREEN, YELLOW, PURPLE} Colors;
+
 typedef struct Block {
   SDL_Rect rect;
-  int render_state;
   struct Block* next;
+  Colors color; 
 }Block; 
 
 typedef struct Ball{
@@ -24,9 +26,11 @@ void check_border_collition(Ball* ball, int* pos_x_delta, int* pos_y_delta);
 
 void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_delta);
 
-void check_block_collition(Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta);
+void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta);
 
 void deallocate(Block** head);
 
-enum directions {LEFT, RIGHT, NONE};
+void delete_block(Block** head, int pos_x, int pos_y);
+
+void create_lvl1(Block** head);
 
