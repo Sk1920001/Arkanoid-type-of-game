@@ -65,19 +65,24 @@ void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_
     float lambda = (float)((ball->rect.y + ball->rect.h) - bar.y)/(-ball->vel_y);
     int ray_collition_x = ball->rect.x + lambda * ball->vel_x;
 
+    float current_vel_mod = sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)); 
     ball->vel_x = 0;
-    ball->vel_y = -8;
+    ball->vel_y = current_vel_mod * -1;
 
     float t = (bar.x + bar.w -ray_collition_x)/(float)bar.w;
     float angle = (-M_PI/(float)3)*t + (M_PI/(float)3)*(1-t);
     rotate_vector(&(ball->vel_x),&(ball->vel_y), angle);
 
     float factor = sqrt(pow(ray_collition_x - next_frame_pos_x, 2) + pow(bar.y - next_frame_pos_y, 2));
-    *pos_x_delta = (ball->vel_x/8)*factor;
-    *pos_y_delta = (ball->vel_y/8)*factor;
+    *pos_x_delta = (ball->vel_x/6)*factor;
+    *pos_y_delta = (ball->vel_y/6)*factor;
 
     ball->rect.x = ray_collition_x;
     ball->rect.y = bar.y - ball->rect.h;
+    if (sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)) <= 12){
+      ball->vel_x *= 1.05;
+      ball->vel_y *= 1.05;
+    } 
   }
 }
 
@@ -131,6 +136,10 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
         ball->vel_y *= -1;
       }
     }
+    if (sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)) <= 12){
+      ball->vel_x *= 1.05;
+      ball->vel_y *= 1.05;
+    } 
     delete_block(head, block->rect.x, block->rect.y);
   
   }
@@ -177,14 +186,14 @@ void create_lvl1(Block** head){
   *head = malloc(sizeof(Block));
   Block* curr = *head;
   curr->rect.x = WINDOW_W - 120;
-  curr->rect.y = WINDOW_H - 120;
+  curr->rect.y = WINDOW_H - 240;
   curr->rect.w = 40;
   curr->rect.h = 10;
   curr->color = RED; 
   curr->next = NULL;
 
   int pos_x = curr->rect.x;
-  int pos_y = curr->rect.y - 3*curr->rect.h;
+  int pos_y = curr->rect.y - curr->rect.h - 3 ;
   int current_color = 2;
 
   while(pos_x - 60 > 0){
@@ -219,13 +228,13 @@ void create_lvl1(Block** head){
           break;
       }
 
-      pos_y = curr->rect.y - 3*curr->rect.h;
+      pos_y = curr->rect.y - curr->rect.h - 3;
 
       
     }
 
-    pos_x = curr->rect.x - (3*curr->rect.w)/2;
-    pos_y = WINDOW_H - 120; 
+    pos_x = curr->rect.x - (curr->rect.w + 3);
+    pos_y = WINDOW_H - 240; 
   }
 
 

@@ -11,8 +11,8 @@ int main(void){
   ball.rect.y = 455;
   ball.rect.w = 5;
   ball.rect.h = 5;
-  ball.vel_x = -(1/sqrt(2))*8;
-  ball.vel_y = -(1/sqrt(2))*8;
+  ball.vel_x = -(1/sqrt(2))*5;
+  ball.vel_y = -(1/sqrt(2))*5;
 
   Block* head = NULL;
   create_lvl1(&head);
@@ -48,7 +48,6 @@ int main(void){
       }
 
     }
-
     pos_x_delta = 0;
     pos_y_delta = 0;
 
