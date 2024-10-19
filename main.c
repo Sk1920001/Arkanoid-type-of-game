@@ -26,7 +26,7 @@ int main(void){
   SDL_Color font_color = {255,255,255};
 
   Block* head = NULL;
-  create_lvl2(&head);
+  create_lvl1(&head);
   
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -86,6 +86,8 @@ int main(void){
     }
 
     if(ball.rect.y >= 480){
+      ball.vel_x = -(1/sqrt(2))*5;
+      ball.vel_y = -(1/sqrt(2))*5;
       curr_lives -= 1;
       game_start = 0;
       score *= 0.75;

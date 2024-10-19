@@ -90,7 +90,6 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
 
   if(next_frame_pos_y + ball->rect.h >= block->rect.y && next_frame_pos_y <= block->rect.y+ block->rect.h && next_frame_pos_x + ball->rect.w >= block->rect.x && next_frame_pos_x <= block->rect.x + block->rect.w){
 
-    *score += 15;
 
     if(ball->vel_x >= 0 && ball->vel_y <= 0){
       float lambda = (float)((ball->rect.x + ball->rect.w) - block->rect.x)/(-ball->vel_x);
@@ -135,9 +134,9 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
 
     }
     float current_vel_mod = sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)); 
-    *score += 4*current_vel_mod;
+    *score += 5*current_vel_mod;
 
-    if (current_vel_mod <= 12){
+    if (current_vel_mod <= 15){
       ball->vel_x *= 1.05;
       ball->vel_y *= 1.05;
     } 
@@ -196,64 +195,6 @@ void create_lvl1(Block** head){
   int pos_x = curr->rect.x;
   int pos_y = curr->rect.y - curr->rect.h - 3 ;
   int current_color = 2;
-  int count_rows = 0;
-
-  while(pos_x - 60 > 0){
-      
-    while(pos_y - 100  > 0){
-
-      curr->next = malloc(sizeof(Block));
-      curr = curr->next;
-
-      curr->rect.x = pos_x;
-      curr->rect.y = pos_y;
-      curr->rect.w = 40;
-      curr->rect.h = 10;
-      curr->next = NULL;
-
-      switch (current_color) {
-        case 1:
-          curr->color = RED;
-          current_color = 2;
-          break;
-        case 2:
-          curr->color = GREEN;
-          current_color = 3;
-          break;
-        case 3:
-          curr->color = YELLOW;
-          current_color = 4;
-          break;
-        case 4:
-          curr->color = PURPLE;
-          current_color = 1;
-          break;
-      }
-
-      pos_y = curr->rect.y - curr->rect.h - 3;
-
-      
-    }
-    count_rows++;
-
-    pos_x = curr->rect.x - (curr->rect.w + 3);
-    pos_y = WINDOW_H - 240 -count_rows*(curr->rect.h + 3); 
-  }
-}
-
-void create_lvl2(Block** head){
-  *head = malloc(sizeof(Block));
-  Block* curr = *head;
-  curr->rect.x = WINDOW_W - 120;
-  curr->rect.y = WINDOW_H - 240;
-  curr->rect.w = 40;
-  curr->rect.h = 10;
-  curr->color = RED; 
-  curr->next = NULL;
-
-  int pos_x = curr->rect.x;
-  int pos_y = curr->rect.y - curr->rect.h - 3 ;
-  int current_color = 2;
 
   while(pos_x - 60 > 0){
       
@@ -295,8 +236,74 @@ void create_lvl2(Block** head){
     pos_x = curr->rect.x - (curr->rect.w + 3);
     pos_y = WINDOW_H - 240; 
   }
-
-
-
 }
+
+void create_lvl2(Block** head){
+  *head = malloc(sizeof(Block));
+  Block* curr = *head;
+  curr->rect.x = WINDOW_W - 43;
+  curr->rect.y = WINDOW_H - 120;
+  curr->rect.w = 40;
+  curr->rect.h = 10;
+  curr->color = RED; 
+  curr->next = NULL;
+
+  int pos_x = curr->rect.x;
+  int pos_y = curr->rect.y - curr->rect.h - 3 ;
+  int current_color = 2;
+  int count_rows = 0;
+
+  while(pos_x - 3 > 0){
+      
+    while(pos_y - 160 > 0){
+
+      curr->next = malloc(sizeof(Block));
+      curr = curr->next;
+
+      curr->rect.x = pos_x;
+      curr->rect.y = pos_y;
+      curr->rect.w = 40;
+      curr->rect.h = 10;
+      curr->next = NULL;
+
+      switch (current_color) {
+        case 1:
+          curr->color = RED;
+          current_color = 2;
+          break;
+        case 2:
+          curr->color = GREEN;
+          current_color = 3;
+          break;
+        case 3:
+          curr->color = YELLOW;
+          current_color = 4;
+          break;
+        case 4:
+          curr->color = PURPLE;
+          current_color = 1;
+          break;
+      }
+
+      pos_y = curr->rect.y - curr->rect.h - 3;
+
+      
+    }
+    count_rows++;
+
+    pos_x = curr->rect.x - (curr->rect.w + 3);
+    pos_y = WINDOW_H - 120 -(count_rows * (curr->rect.h+3));
+  }
+}
+/* Si Hago lo siguiente piensa que estoy dereferenciando el puntero
+
+pos_y = WINDOW_H - 240 -(count_rows*(curr->rect.w+3)) 
+
+me entrega creo que la direccion de memoria de la wea xd
+ 
+*/
+
+
+
+
 
