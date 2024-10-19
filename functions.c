@@ -136,9 +136,9 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
     float current_vel_mod = sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)); 
     *score += 5*current_vel_mod;
 
-    if (current_vel_mod <= 15){
-      ball->vel_x *= 1.05;
-      ball->vel_y *= 1.05;
+    if (current_vel_mod <= 10){
+      ball->vel_x *= 1.1;
+      ball->vel_y *= 1.1;
     } 
     delete_block(head, block->rect.x, block->rect.y);
   
@@ -188,7 +188,7 @@ void create_lvl1(Block** head){
   curr->rect.x = WINDOW_W - 120;
   curr->rect.y = WINDOW_H - 240;
   curr->rect.w = 40;
-  curr->rect.h = 10;
+  curr->rect.h = 15;
   curr->color = RED; 
   curr->next = NULL;
 
@@ -206,7 +206,7 @@ void create_lvl1(Block** head){
       curr->rect.x = pos_x;
       curr->rect.y = pos_y;
       curr->rect.w = 40;
-      curr->rect.h = 10;
+      curr->rect.h = 15;
       curr->next = NULL;
 
       switch (current_color) {
@@ -244,7 +244,7 @@ void create_lvl2(Block** head){
   curr->rect.x = WINDOW_W - 43;
   curr->rect.y = WINDOW_H - 120;
   curr->rect.w = 40;
-  curr->rect.h = 10;
+  curr->rect.h = 15;
   curr->color = RED; 
   curr->next = NULL;
 
@@ -255,7 +255,7 @@ void create_lvl2(Block** head){
 
   while(pos_x - 3 > 0){
       
-    while(pos_y - 160 > 0){
+    while(pos_y - 100 > 0){
 
       curr->next = malloc(sizeof(Block));
       curr = curr->next;
@@ -263,7 +263,7 @@ void create_lvl2(Block** head){
       curr->rect.x = pos_x;
       curr->rect.y = pos_y;
       curr->rect.w = 40;
-      curr->rect.h = 10;
+      curr->rect.h = 15;
       curr->next = NULL;
 
       switch (current_color) {
@@ -289,7 +289,9 @@ void create_lvl2(Block** head){
 
       
     }
-    count_rows++;
+    if(count_rows < 15){
+      count_rows++;
+    }
 
     pos_x = curr->rect.x - (curr->rect.w + 3);
     pos_y = WINDOW_H - 120 -(count_rows * (curr->rect.h+3));

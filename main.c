@@ -90,11 +90,82 @@ int main(void){
       ball.vel_y = -(1/sqrt(2))*5;
       curr_lives -= 1;
       game_start = 0;
-      score *= 0.75;
     }
 
-    if(curr_lives == 0){
-      running = 0;
+    if(curr_lives == 0 || (head == NULL && curr_level == 2)){
+      deallocate(&head);
+      score += curr_lives * 5000;
+      int run_menu = 1;
+
+      char top_score_buf[50];
+
+      FILE *file_r = fopen("topscore.txt","r");
+      while (fgets(top_score_buf, sizeof(top_score_buf), file_r) != NULL) {
+      }
+      int topscore = atoi(top_score_buf);
+      fclose(file_r);
+      
+      if (topscore < score){
+        FILE *file_w = fopen("topscore.txt","w");
+        sprintf(buf, "%d\n",score);
+        fputs(buf, file_w);
+        fclose(file_w);
+        topscore = score;
+      }
+
+      while(run_menu){
+        while(SDL_PollEvent(&e)){
+          if(e.type == SDL_QUIT){
+            run_menu = 0;
+            running = 0;
+          }
+          else if (e.type == SDL_KEYDOWN) {
+            if(e.key.keysym.sym == SDLK_RETURN){
+              run_menu = 0;
+              score = 0;
+              curr_lives = 5;
+              curr_level = 1;
+              create_lvl1(&head);
+            }
+          }
+        }
+
+        
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        surface_message= TTF_RenderText_Solid(font,"Game Over",font_color);
+        message = SDL_CreateTextureFromSurface(renderer, surface_message);
+        SDL_Rect text_rect_game_over = {180,15,surface_message->w,surface_message->h};
+        SDL_RenderCopy(renderer,message,NULL,&text_rect_game_over); // pass the direction of the text_rect (pointer)
+
+        sprintf(buf, "%d", score);
+        char score_message[50] = "Your Score : ";
+        strcat(score_message, buf);
+        surface_message= TTF_RenderText_Solid(font,score_message,font_color);
+        message = SDL_CreateTextureFromSurface(renderer, surface_message);
+        SDL_Rect score_text_rect = {15,90,surface_message->w,surface_message->h};
+        SDL_RenderCopy(renderer,message,NULL,&score_text_rect); 
+
+        sprintf(buf, "%d", topscore);
+        char top_score_message[50] = "Top Score : ";
+        strcat(top_score_message, buf);
+        surface_message= TTF_RenderText_Solid(font,top_score_message,font_color);
+        message = SDL_CreateTextureFromSurface(renderer, surface_message);
+        SDL_Rect top_score_text_rect = {15,180,surface_message->w,surface_message->h};
+        SDL_RenderCopy(renderer,message,NULL,&top_score_text_rect); 
+
+        surface_message= TTF_RenderText_Solid(font,"Press ENTER to play",font_color);
+        message = SDL_CreateTextureFromSurface(renderer, surface_message);
+        SDL_Rect press_enter_rect = {15,270,surface_message->w,surface_message->h};
+        SDL_RenderCopy(renderer,message,NULL,&press_enter_rect); 
+        
+        SDL_RenderPresent(renderer);
+        SDL_Delay(30);
+        
+        
+      }
     }
 
     if(head == NULL){
@@ -106,9 +177,6 @@ int main(void){
           curr_lives += 1;
           break;
           
-        case 2:
-          running = 0;
-          break;
       }
     }
 
@@ -174,6 +242,12 @@ int main(void){
     SDL_RenderPresent(renderer);
     SDL_Delay(30);
   }
+
+
+  SDL_FreeSurface(surface_message);
+  SDL_DestroyTexture(message);
+  TTF_CloseFont(font);
+  TTF_Quit();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
