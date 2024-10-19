@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h> 
+#include <SDL2/SDL_ttf.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -26,11 +27,13 @@ void check_border_collition(Ball* ball, int* pos_x_delta, int* pos_y_delta);
 
 void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_delta);
 
-void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta);
+void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta, int* score);
 
 void deallocate(Block** head);
 
 void delete_block(Block** head, int pos_x, int pos_y);
 
 void create_lvl1(Block** head);
+
+void create_lvl2(Block** head);
 

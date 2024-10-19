@@ -20,15 +20,15 @@ void check_border_collition(Ball* ball, int* pos_x_delta, int* pos_y_delta){
       return;
     }
 
-    if((ball->rect.x + ball->rect.w) + ball->vel_x >= 640){
-      *pos_x_delta = -(ball->rect.x + ball->rect.w + ball->vel_x -640);
+    if((ball->rect.x + ball->rect.w) + ball->vel_x >= WINDOW_W){
+      *pos_x_delta = -(ball->rect.x + ball->rect.w + ball->vel_x -WINDOW_W);
       ball->vel_x = ball->vel_x * -1;
       return;
 
     }
 
-    if(ball->rect.y + ball->vel_y <= 0){
-      *pos_y_delta = -(ball->rect.y + ball->vel_y);
+    if(ball->rect.y + ball->vel_y <= 80){
+      *pos_y_delta = -(ball->rect.y + ball->vel_y - 80);
       ball->vel_y = ball->vel_y * -1;
       return;
 
@@ -74,27 +74,24 @@ void check_bar_collition(Ball* ball, SDL_Rect bar, int* pos_x_delta, int* pos_y_
     rotate_vector(&(ball->vel_x),&(ball->vel_y), angle);
 
     float factor = sqrt(pow(ray_collition_x - next_frame_pos_x, 2) + pow(bar.y - next_frame_pos_y, 2));
-    *pos_x_delta = (ball->vel_x/6)*factor;
-    *pos_y_delta = (ball->vel_y/6)*factor;
+    *pos_x_delta = (ball->vel_x/current_vel_mod)*factor;
+    *pos_y_delta = (ball->vel_y/current_vel_mod)*factor;
 
     ball->rect.x = ray_collition_x;
     ball->rect.y = bar.y - ball->rect.h;
-    if (sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)) <= 12){
-      ball->vel_x *= 1.05;
-      ball->vel_y *= 1.05;
-    } 
   }
 }
 
 
-void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta){
+void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_delta, int* pos_y_delta, int* score){
 
   int next_frame_pos_x = ball->rect.x + ball->vel_x;
   int next_frame_pos_y = ball->rect.y + ball->vel_y;
 
   if(next_frame_pos_y + ball->rect.h >= block->rect.y && next_frame_pos_y <= block->rect.y+ block->rect.h && next_frame_pos_x + ball->rect.w >= block->rect.x && next_frame_pos_x <= block->rect.x + block->rect.w){
 
-    
+    *score += 15;
+
     if(ball->vel_x >= 0 && ball->vel_y <= 0){
       float lambda = (float)((ball->rect.x + ball->rect.w) - block->rect.x)/(-ball->vel_x);
       int ray_collition_y = ball->rect.y + lambda * ball->vel_y;
@@ -135,8 +132,12 @@ void check_block_collition(Block** head, Block* block, Ball* ball, int* pos_x_de
         *pos_y_delta = block->rect.y - (ball->rect.y + ball->rect.h + ball->vel_y);
         ball->vel_y *= -1;
       }
+
     }
-    if (sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)) <= 12){
+    float current_vel_mod = sqrt(pow(ball->vel_x,2) + pow(ball->vel_y,2)); 
+    *score += 4*current_vel_mod;
+
+    if (current_vel_mod <= 12){
       ball->vel_x *= 1.05;
       ball->vel_y *= 1.05;
     } 
@@ -195,10 +196,68 @@ void create_lvl1(Block** head){
   int pos_x = curr->rect.x;
   int pos_y = curr->rect.y - curr->rect.h - 3 ;
   int current_color = 2;
+  int count_rows = 0;
 
   while(pos_x - 60 > 0){
       
-    while(pos_y - 40 > 0){
+    while(pos_y - 100  > 0){
+
+      curr->next = malloc(sizeof(Block));
+      curr = curr->next;
+
+      curr->rect.x = pos_x;
+      curr->rect.y = pos_y;
+      curr->rect.w = 40;
+      curr->rect.h = 10;
+      curr->next = NULL;
+
+      switch (current_color) {
+        case 1:
+          curr->color = RED;
+          current_color = 2;
+          break;
+        case 2:
+          curr->color = GREEN;
+          current_color = 3;
+          break;
+        case 3:
+          curr->color = YELLOW;
+          current_color = 4;
+          break;
+        case 4:
+          curr->color = PURPLE;
+          current_color = 1;
+          break;
+      }
+
+      pos_y = curr->rect.y - curr->rect.h - 3;
+
+      
+    }
+    count_rows++;
+
+    pos_x = curr->rect.x - (curr->rect.w + 3);
+    pos_y = WINDOW_H - 240 -count_rows*(curr->rect.h + 3); 
+  }
+}
+
+void create_lvl2(Block** head){
+  *head = malloc(sizeof(Block));
+  Block* curr = *head;
+  curr->rect.x = WINDOW_W - 120;
+  curr->rect.y = WINDOW_H - 240;
+  curr->rect.w = 40;
+  curr->rect.h = 10;
+  curr->color = RED; 
+  curr->next = NULL;
+
+  int pos_x = curr->rect.x;
+  int pos_y = curr->rect.y - curr->rect.h - 3 ;
+  int current_color = 2;
+
+  while(pos_x - 60 > 0){
+      
+    while(pos_y - 100  > 0){
 
       curr->next = malloc(sizeof(Block));
       curr = curr->next;
@@ -240,14 +299,4 @@ void create_lvl1(Block** head){
 
 
 }
-
-
-
-
-
-
-
-
-
-
 
