@@ -1,5 +1,7 @@
 #include "functions.h"
 
+// arreglar el memory leak!
+
 int main(void){
   
   SDL_Window* window = NULL;
@@ -85,6 +87,10 @@ int main(void){
       check_block_collition(&head,curr,&ball,&pos_x_delta,&pos_y_delta,&score);
     }
 
+    if((int)ball.vel_y == 0){
+      rotate_vector(&(ball.vel_x),&(ball.vel_y),M_PI/8);
+    }
+
     if(ball.rect.y >= 480){
       ball.vel_x = -(1/sqrt(2))*5;
       ball.vel_y = -(1/sqrt(2))*5;
@@ -94,7 +100,7 @@ int main(void){
 
     if(curr_lives == 0 || (head == NULL && curr_level == 2)){
       deallocate(&head);
-      score += curr_lives * 5000;
+      score += curr_lives * 1000;
       int run_menu = 1;
 
       char top_score_buf[50];
@@ -125,6 +131,8 @@ int main(void){
               score = 0;
               curr_lives = 5;
               curr_level = 1;
+              ball.vel_x = -(1/sqrt(2))*5;
+              ball.vel_y = -(1/sqrt(2))*5;
               create_lvl1(&head);
             }
           }
@@ -139,6 +147,8 @@ int main(void){
         message = SDL_CreateTextureFromSurface(renderer, surface_message);
         SDL_Rect text_rect_game_over = {180,15,surface_message->w,surface_message->h};
         SDL_RenderCopy(renderer,message,NULL,&text_rect_game_over); // pass the direction of the text_rect (pointer)
+        SDL_FreeSurface(surface_message);
+        SDL_DestroyTexture(message);
 
         sprintf(buf, "%d", score);
         char score_message[50] = "Your Score : ";
@@ -147,6 +157,8 @@ int main(void){
         message = SDL_CreateTextureFromSurface(renderer, surface_message);
         SDL_Rect score_text_rect = {15,90,surface_message->w,surface_message->h};
         SDL_RenderCopy(renderer,message,NULL,&score_text_rect); 
+        SDL_FreeSurface(surface_message);
+        SDL_DestroyTexture(message);
 
         sprintf(buf, "%d", topscore);
         char top_score_message[50] = "Top Score : ";
@@ -155,11 +167,15 @@ int main(void){
         message = SDL_CreateTextureFromSurface(renderer, surface_message);
         SDL_Rect top_score_text_rect = {15,180,surface_message->w,surface_message->h};
         SDL_RenderCopy(renderer,message,NULL,&top_score_text_rect); 
+        SDL_FreeSurface(surface_message);
+        SDL_DestroyTexture(message);
 
         surface_message= TTF_RenderText_Solid(font,"Press ENTER to play",font_color);
         message = SDL_CreateTextureFromSurface(renderer, surface_message);
         SDL_Rect press_enter_rect = {15,270,surface_message->w,surface_message->h};
         SDL_RenderCopy(renderer,message,NULL,&press_enter_rect); 
+        SDL_FreeSurface(surface_message);
+        SDL_DestroyTexture(message);
         
         SDL_RenderPresent(renderer);
         SDL_Delay(30);
@@ -202,12 +218,16 @@ int main(void){
     message = SDL_CreateTextureFromSurface(renderer, surface_message);
     SDL_Rect text_rect = {15,15,surface_message->w,surface_message->h};
     SDL_RenderCopy(renderer,message,NULL,&text_rect); // pass the direction of the text_rect (pointer)
+    SDL_FreeSurface(surface_message);
+    SDL_DestroyTexture(message);
   
     sprintf(buf,"%d",curr_lives);
     surface_message= TTF_RenderText_Solid(font, buf,font_color);
     message = SDL_CreateTextureFromSurface(renderer, surface_message);
     SDL_Rect lives_rect = {600,15,surface_message->w,surface_message->h};
     SDL_RenderCopy(renderer,message,NULL,&lives_rect); // pass the direction of the text_rect (pointer)
+    SDL_FreeSurface(surface_message);
+    SDL_DestroyTexture(message);
 
     SDL_SetRenderDrawColor(renderer,0,0,255,255);
     SDL_RenderFillRect(renderer,&bar);
@@ -242,10 +262,6 @@ int main(void){
     SDL_RenderPresent(renderer);
     SDL_Delay(30);
   }
-
-
-  SDL_FreeSurface(surface_message);
-  SDL_DestroyTexture(message);
   TTF_CloseFont(font);
   TTF_Quit();
   SDL_DestroyRenderer(renderer);
